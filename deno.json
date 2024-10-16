@@ -1,0 +1,15 @@
+{
+  "imports": {
+    "@/": "./src/",
+    "testing": "jsr:@std/assert",
+    "deno-flags":"https://deno.land/std@0.192.0/flags/mod.ts",
+    "deno-path":"https://deno.land/std@0.192.0/path/mod.ts"
+  },
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "tasks": {
+    "dev": "deno run --allow-net --allow-read --allow-env --allow-sys --allow-run --allow-write --watch src/main.ts"
+  }
+}
