@@ -1,13 +1,15 @@
 #!/bin/bash
 
-DOCKER_CMD="docker run --rm nubank-code-challenge"
-
-docker build -t nubank-code-challenge .
-
 if [[ $1 == "--file="* ]]; then
   FILE_PATH="${1#--file=}"
-  DOCKER_CMD='docker run --rm -e FILE_PATH="$FILE_PATH" nubank-code-challenge'
-fi
 
-echo "Executando: $DOCKER_CMD"
-eval $DOCKER_CMD
+  FILE_PATH="${FILE_PATH/#\~/$HOME}"
+
+  echo "PATH: $FILE_PATH"
+
+  docker build -t nubank-code-challenge .
+  docker run --rm --name nubank-code-challenge nubank-code-challenge sh -c "cp '$FILE_PATH' /app/inputed_file.txt && sh ./start.sh"
+else
+  docker build -t nubank-code-challenge .
+  docker run --rm nubank-code-challenge
+fi
