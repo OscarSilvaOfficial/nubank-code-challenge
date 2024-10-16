@@ -12,21 +12,6 @@ type OperationUnitInput = {
   quantity: number;
 };
 
-function splitArrays(input: string) {
-  try {
-    const arrayStrings = input.match(/(\[\s*{.*?}\s*\])+/g);
-
-    if (arrayStrings && arrayStrings.length > 1) {
-      const arrays = arrayStrings.map((arrayString) => JSON.parse(arrayString));
-      return arrays;
-    }
-
-    return input;
-  } catch (error) {
-    throw new Error("String processing error", error);
-  }
-}
-
 function inputParser(input: string): OperationData[][] {
   const arrayStrings = input.replaceAll(' ', '').match(/\[[^\[\]]+\]/g);
 
