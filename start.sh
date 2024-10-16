@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Diretório padrão para os arquivos de entrada
 INPUT_DIR="./inputs"
@@ -12,12 +12,14 @@ process_file() {
 }
 
 # Verifica se o parâmetro --file foi passado
-if [ "$#" -eq 1 ] && [[ "$1" == --file=* ]]; then
+if [ "$#" -eq 1 ] && [ "${1#--file=}" != "$1" ]; then
   # Extrai o caminho do arquivo passado como argumento
-  FILE_PATH=${1#--file=}
+  FILE_PATH="${1#--file=}"
 
   # Expande o '~' se o caminho começar com ele
-  FILE_PATH="${FILE_PATH/#\~/$HOME}"
+  if [ "${FILE_PATH:0:1}" = "~" ]; then
+    FILE_PATH="$HOME${FILE_PATH:1}"
+  fi
 
   # Verifica se o arquivo existe
   if [ -f "$FILE_PATH" ]; then
