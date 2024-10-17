@@ -1,9 +1,11 @@
-FROM denoland/deno:alpine-1.44.4
+  FROM denoland/deno:alpine-1.44.4
 
-WORKDIR /app
+  WORKDIR /app
 
-COPY . .
+  COPY . .
+  
+  RUN deno cache src/libs.ts
 
-RUN chmod +x start.sh
+  RUN chmod +x start.sh
 
-CMD ["sh", "./start.sh"]
+  CMD ["sh", "./start.sh"]

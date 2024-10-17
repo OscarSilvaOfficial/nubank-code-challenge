@@ -3,8 +3,8 @@ import {
   OperationData,
   OperationTypes,
 } from "@/core/domains/operation/types.ts";
-import { CommandLineInterface } from "./application/external/cli.ts";
 import { TaxCalculationController } from "@/application/internal/controllers/tax.controller.ts";
+import { CommandLineInterfaceFileInput } from "@/application/external/cli.ts";
 
 
 type OperationUnitInput = {
@@ -36,12 +36,10 @@ function inputParser(input: string): OperationData[][] {
 }
 
 async function main() {
-  const cli = new CommandLineInterface();
+  const stdin = await CommandLineInterfaceFileInput();
 
   try {
-    const fileContent = await cli.getFileContent();
-
-    for (const execution of inputParser(fileContent.trim())) {
+    for (const execution of inputParser(stdin)) {
       const taxes = TaxCalculationController(new TaxCalculationService(), execution)
       console.log(JSON.stringify(taxes));
     }
