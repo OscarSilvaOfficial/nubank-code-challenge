@@ -4,7 +4,7 @@ import {
   OperationTypes,
 } from "@/core/domains/operation/types.ts";
 import { CommandLineInterface } from "./application/external/cli.ts";
-import { TaxController } from "@/application/internal/controllers/tax.controller.ts";
+import { TaxCalculationController } from "@/application/internal/controllers/tax.controller.ts";
 
 
 type OperationUnitInput = {
@@ -42,8 +42,7 @@ async function main() {
     const fileContent = await cli.getFileContent();
 
     for (const execution of inputParser(fileContent.trim())) {
-      const taxController = new TaxController(new TaxCalculationService());
-      const taxes = taxController.calculateTax(execution);
+      const taxes = TaxCalculationController(new TaxCalculationService(), execution)
       console.log(JSON.stringify(taxes));
     }
   } catch (err) {

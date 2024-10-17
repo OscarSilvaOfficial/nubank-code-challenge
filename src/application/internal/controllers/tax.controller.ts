@@ -5,18 +5,25 @@ type TaxOutput = {
   tax: number;
 };
 
-export class TaxController {
-  constructor(private readonly taxService: TaxCalculationContract<OperationData[]>) {}
+export function TaxCalculationController(
+  taxService: TaxCalculationContract<OperationData[]>,
+  batchOperation: OperationData[],
+) {
+  const taxes = calculateTax(taxService, batchOperation)
+  return taxes
+}
 
-  calculateTax(batchOperation: OperationData[]) {
-    const taxes = this.taxService.execute(batchOperation);
-    const output = this.outputParser(taxes);
-    return output;
-  }
+function calculateTax(
+  taxService: TaxCalculationContract<OperationData[]>,
+  batchOperation: OperationData[],
+) {
+  const taxes = taxService.execute(batchOperation);
+  const output = outputParser(taxes);
+  return output;
+}
 
-  private outputParser(input: number[]): TaxOutput[] {
-    return input.map((data) => ({
-      tax: data,
-    }));
-  }
+function outputParser(input: number[]): TaxOutput[] {
+  return input.map((data) => ({
+    tax: data,
+  }));
 }
