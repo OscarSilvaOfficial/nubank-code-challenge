@@ -1,14 +1,21 @@
 import { parse } from "deno-flags";
 
-export async function CommandLineInterfaceFileInput() {
-  const args = parse(Deno.args, {
+function externalCLI() {
+  return parse(Deno.args, {
     alias: { f: "file" },
     default: { file: null },
   });
+}
 
-  const filePath = args.file;
+export interface CLI {
+  [x: string]: any;
+  _: (string | number)[];
+}
+
+export async function CommandLineInterfaceFileInput(cli: CLI = externalCLI()) {
+  const filePath = cli.file;
   const absolutePath = await Deno.realPath(filePath);
   const outdata = await Deno.readTextFile(absolutePath) as string;
 
-  return outdata.trim()
+  return outdata.trim();
 }
