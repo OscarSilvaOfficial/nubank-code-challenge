@@ -21,7 +21,7 @@ No nosso caso, optei por usar o Docker para isolar o ambiente de execução
 
 ## Design de Código
 Me inspirei em arquiteturas como **Hexagonal Architecture** e **Clean Architecture**, mas não adicionei todas as camadas necessárias, pois isso iria complexificar extremamente o projeto.
-Então decidi isolar bastante a camada de negócio (`core`) utilizando `dependecy inversion`, e simplificar as camadas superiores.
+Então decidi isolar bastante a camada de negócio (`core`) utilizando `dependency inversion`, e simplificar as camadas superiores.
 
 ![High level system design](./docs/377293146-36ec9949-8f38-44bd-9d35-82f2370b371c.png)
 
