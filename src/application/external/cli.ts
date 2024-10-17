@@ -10,12 +10,7 @@ export class CommandLineInterface {
       default: { file: null },
     });
   
-    let filePath = args.file;
-  
-    if (filePath.startsWith("~")) {
-      const homeDir = Deno.env.get("HOME") as string;
-      filePath = join(homeDir, filePath.slice(1));
-    }
+    const filePath = args.file;
 
     const absolutePath = await Deno.realPath(filePath);
     const outdata = await Deno.readTextFile(absolutePath) as string;
