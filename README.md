@@ -1,5 +1,9 @@
 # Nubank Code Challenge
 
+## Como desenvolvi
+- **TDD**: antes de tudo, escrevi os casos de teste unitário baseado nos cases da documentação.
+- **Regras de negócio**: o projeto foi totalmente pensado para isolar o máximo possível das regras de negócio, de estruturas comumente mais mutáveis, como qual será a ferramenta para capturar o input de dados.
+  
 ## Tecnologias
 ### Deno
 Utilizei o deno como runtime para facilitar o processo de execução e testes, pois o Deno interpreta o Typescript diretamente, sem passar pelo processo de transpilação para Javascript e logo em seguida é interpretado pelo Node.
