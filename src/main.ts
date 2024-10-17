@@ -4,7 +4,8 @@ import {
   OperationTypes,
 } from "@/core/domains/operation/types.ts";
 import { CommandLineInterface } from "./application/external/cli.ts";
-import { TaxCalculationContract } from "@/core/contracts/services/tax_contract.ts";
+import { TaxController } from "@/application/internal/controllers/tax.controller.ts";
+
 
 type OperationUnitInput = {
   operation: string;
@@ -13,7 +14,7 @@ type OperationUnitInput = {
 };
 
 function inputParser(input: string): OperationData[][] {
-  const arrayStrings = input.replaceAll(' ', '').match(/\[[^\[\]]+\]/g);
+  const arrayStrings = input.replaceAll(" ", "").match(/\[[^\[\]]+\]/g);
 
   if (arrayStrings && arrayStrings.length > 1) {
     return arrayStrings.map((arrayString) =>
@@ -25,32 +26,25 @@ function inputParser(input: string): OperationData[][] {
     );
   }
 
-  return [JSON.parse(input).map((data: OperationUnitInput) => ({
-    type: data.operation as OperationTypes,
-    unitCost: data["unit-cost"],
-    quantity: data.quantity,
-  }))];
-}
-
-function outputParser(input: number[]): { tax: number }[] {
-  return input.map((data) => ({
-    tax: data,
-  }));
+  return [
+    JSON.parse(input).map((data: OperationUnitInput) => ({
+      type: data.operation as OperationTypes,
+      unitCost: data["unit-cost"],
+      quantity: data.quantity,
+    })),
+  ];
 }
 
 async function main() {
-
   const cli = new CommandLineInterface();
-  
+
   try {
     const fileContent = await cli.getFileContent();
-    
-    for (const execution of inputParser(fileContent.trim())) {
-      const service: TaxCalculationContract<OperationData[]> =
-        new TaxCalculationService();
 
-      const taxResults = outputParser(service.execute(execution));
-      console.log(JSON.stringify(taxResults));
+    for (const execution of inputParser(fileContent.trim())) {
+      const taxController = new TaxController(new TaxCalculationService());
+      const taxes = taxController.calculateTax(execution);
+      console.log(JSON.stringify(taxes));
     }
   } catch (err) {
     console.error("Read file error", err.message);
