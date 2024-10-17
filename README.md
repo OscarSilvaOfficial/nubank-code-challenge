@@ -11,8 +11,26 @@ Decidi pelo uso do Typescript pois a tipagem estática me ajuda a ter mais segur
 No nosso caso, optei por usar o Docker para isolar o ambiente de execução
 
 ## Design de Código
-Me inspirei em arquiteturas como Hexagonal Architecture e Clean Architecture, mas não adicionei todas as camadas necessárias, pois isso iria complexificar extremamente o projeto.
+Me inspirei em arquiteturas como **Hexagonal Architecture** e **Clean Architecture**, mas não adicionei todas as camadas necessárias, pois isso iria complexificar extremamente o projeto.
 Então decidi isolar bastante a camada de negócio (`core`) utilizando `dependecy inversion` e `single responsability`, e as camadas superiores estão bem simplificadas.
+
+![Captura de tela de 2024-10-16 23-51-24](https://github.com/user-attachments/assets/36ec9949-8f38-44bd-9d35-82f2370b371c)
+
+### Application
+
+#### External
+Nela coloquei a ferramenta de CLI, pois ela serve apenas para capturar o input de dados, isso deve ser fácilmente substituível.
+
+#### Internal
+Aqui temos apenas a controller, ela serve para conversão de dados de input, para o uso interno da aplicação, e modelos internos para output.
+
+### Core
+
+#### Services
+Possui regras de negócio e conduz fluxos de dados utilizando dos domínios.
+
+#### Domais
+Modelo de dados com validações específicas do domínio.
 
 ## Rodar projeto
 Para ler todos os arquivos que foram pré inseridos para facilitar o processo, rode esse comando
