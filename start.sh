@@ -4,12 +4,10 @@ INPUT_DIR="./inputs"
 
 process_file() {
   local file=$1
-  echo "Processando arquivo: $file"
+  echo "Starting file processing: $file"
   deno run --allow-read --allow-env ./src/main.ts --file="$file"
   echo "-----------------------------"
 }
-
-echo "Start process"
 
 if [ -f "inputed_file.txt" ]; then
   process_file "inputed_file.txt"
