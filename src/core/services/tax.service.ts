@@ -74,11 +74,11 @@ export class TaxCalculationService
     unitCost: number,
     quantity: number,
   ): { newAccumulatedLoss: number; newTotalQuantity: number; tax: number } {
-    let profitOrLoss = (unitCost - weightedAveragePrice) * quantity;
+    const profitOrLoss = (unitCost - weightedAveragePrice) * quantity;
     const totalSaleValue = unitCost * quantity;
 
     if (this.isProfitWithTax(profitOrLoss, accumulatedLoss) && !this.isTaxFreeByTotalAmount(totalSaleValue)) {
-      profitOrLoss -= accumulatedLoss;
+      const profitOrLoss = ((unitCost - weightedAveragePrice) * quantity) - accumulatedLoss;
       return {
         newAccumulatedLoss: 0,
         newTotalQuantity: totalQuantity - quantity,
@@ -133,7 +133,7 @@ export class TaxCalculationService
   ): { newWeightedAveragePrice: number; newTotalQuantity: number } {
     const totalValueBefore = currentTotalQuantity * currentWeightedAveragePrice;
     const totalValueNewPurchase = quantity * unitCost;
-    
+
     const newWeightedAveragePrice = (totalValueBefore + totalValueNewPurchase) /
       (currentTotalQuantity + quantity);
 
