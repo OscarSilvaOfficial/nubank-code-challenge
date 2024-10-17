@@ -1,11 +1,6 @@
 # Nubank Code Challenge
 
 ## Tecnologias
-Escolhei para esse desafio as técnologias:
-- Deno
-- Typescript
-- Docker
-
 ### Deno
 Utilizei o deno como runtime para facilitar o processo de execução e testes, pois o Deno interpreta o Typescript diretamente, sem passar pelo processo de transpilação para Javascript e logo em seguida é interpretado pelo Node.
 
