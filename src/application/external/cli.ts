@@ -1,5 +1,4 @@
 import { parse } from "deno-flags";
-import { join } from "deno-path";
 
 export class CommandLineInterface {
   constructor() {}
