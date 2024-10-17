@@ -6,9 +6,14 @@ import { OperationData } from "@/core/domains/operation/types.ts";
 export class TaxCalculationService
   implements TaxCalculationContract<OperationData[]> {
 
-  private static TAX_ON_PROFIT = 0.2;
-
   execute(operations: OperationData[]): number[] {
+    const initialValues = {
+      weightedAveragePrice: 0,
+      totalQuantity: 0,
+      accumulatedLoss: 0,
+      taxValues: [] as number[],
+    }
+
     return operations.reduce((acc, operationData) => {
       const operation = new Operation(
         operationData.type,
@@ -29,12 +34,7 @@ export class TaxCalculationService
         accumulatedLoss,
         taxValues: [...acc.taxValues, tax],
       };
-    }, {
-      weightedAveragePrice: 0,
-      totalQuantity: 0,
-      accumulatedLoss: 0,
-      taxValues: [] as number[],
-    }).taxValues;
+    }, initialValues).taxValues;
   }
 
   private processOperation(
@@ -76,13 +76,14 @@ export class TaxCalculationService
   ): { newAccumulatedLoss: number; newTotalQuantity: number; tax: number } {
     const profitOrLoss = (unitCost - weightedAveragePrice) * quantity;
     const totalSaleValue = unitCost * quantity;
+    const TAX_ON_PROFIT = 0.2
 
     if (this.isProfitWithTax(profitOrLoss, accumulatedLoss) && !this.isTaxFreeByTotalAmount(totalSaleValue)) {
       const profitOrLoss = ((unitCost - weightedAveragePrice) * quantity) - accumulatedLoss;
       return {
         newAccumulatedLoss: 0,
         newTotalQuantity: totalQuantity - quantity,
-        tax: profitOrLoss * TaxCalculationService.TAX_ON_PROFIT,
+        tax: profitOrLoss * TAX_ON_PROFIT,
       };
     }
 
