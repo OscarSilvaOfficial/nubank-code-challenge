@@ -24,4 +24,11 @@ ou
 ./entrypoint.sh --file="INPUT_FILE.txt"
 ```
 
-> Detalhe muito importante, o arquivo precisa estar no diretório do projeto
+> **Detalhe muito importante**, o arquivo precisa estar no diretório do projeto
+
+## Rodar testes unitários
+
+Para rodar os testes unitários, rode esse comando: 
+```bash
+bash ./tests.sh
+```
