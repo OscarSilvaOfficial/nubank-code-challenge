@@ -7,7 +7,7 @@
   - Eliminar o estado mutável de classes.
   - Usar funções puras que recebem todos os dados como parâmetros e retornam novos valores.
   - Aplicar métodos funcionais como map, reduce, filter.
-- **Orientação a Objetos e Programação Funcional**: Acho que a orientação a objeto misturado com conceitos de programação funcional pode ser bem útil, gosto muito de utilizar estruturas como classes e interfaces para definir padrões de design de código, e utilizar o conceito de imutabilidade para poder ter um código mais previsível e seguro.
+- **Orientação a Objetos e Programação Funcional**: Acho que a orientação a objetos misturado com conceitos de programação funcional pode ser bem útil, gosto muito de utilizar estruturas como classes e interfaces para definir padrões de design de código, e utilizar o conceito de imutabilidade para poder ter um código mais previsível e seguro.
   
 ## Tecnologias
 ### Deno
