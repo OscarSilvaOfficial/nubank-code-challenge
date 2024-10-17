@@ -10,8 +10,11 @@ Decidi pelo uso do Typescript pois a tipagem estática me ajuda a ter mais segur
 ### Docker
 No nosso caso, optei por usar o Docker para isolar o ambiente de execução
 
-## Rodar projeto
+## Design de Código
+Me inspirei em arquiteturas como Hexagonal Architecture e Clean Architecture, mas não adicionei todas as camadas necessárias, pois isso iria complexificar extremamente o projeto.
+Então decidi isolar bastante a camada de negócio (`core`) utilizando `dependecy inversion` e `single responsability`, e as camadas superiores estão bem simplificadas.
 
+## Rodar projeto
 Para ler todos os arquivos que foram pré inseridos para facilitar o processo, rode esse comando
 ```bash
 bash ./entrypoint.sh
