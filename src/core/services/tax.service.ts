@@ -8,97 +8,136 @@ export class TaxCalculationService
 
   private static TAX_ON_PROFIT = 0.2;
 
-  private accumulatedLoss: number = 0;
-  private taxValues: number[] = [];
-  private weightedAveragePrice: number = 0;
-  private totalQuantity: number = 0;
-
   execute(operations: OperationData[]): number[] {
-    for (const operationData of operations) {
+    return operations.reduce((acc, operationData) => {
       const operation = new Operation(
         operationData.type,
         operationData.unitCost,
         operationData.quantity,
       );
 
-      if (operation.getType() === OperationTypeEnum.BUY) {
-        this.updateWeightedAveragePrice(
-          operation.getUnitCost(),
-          operation.getQuantity(),
-        );
-        this.taxValues.push(0);
-      }
+      const { weightedAveragePrice, totalQuantity, accumulatedLoss, tax } = this.processOperation(
+        acc.weightedAveragePrice,
+        acc.totalQuantity,
+        acc.accumulatedLoss,
+        operation,
+      );
 
-      if (operation.getType() === OperationTypeEnum.SELL) {
-        const tax = this.registerSale(
-          operation.getUnitCost(),
-          operation.getQuantity(),
-        );
-        this.taxValues.push(+tax.toFixed(2));
-      }
-    }
-
-    return this.taxValues;
+      return {
+        weightedAveragePrice,
+        totalQuantity,
+        accumulatedLoss,
+        taxValues: [...acc.taxValues, tax],
+      };
+    }, {
+      weightedAveragePrice: 0,
+      totalQuantity: 0,
+      accumulatedLoss: 0,
+      taxValues: [] as number[],
+    }).taxValues;
   }
 
-  private registerSale(unitCost: number, quantity: number): number {
-    let profitOrLoss = (unitCost - this.weightedAveragePrice) * quantity;
-    const totalSaleValue = unitCost * quantity;
-
-    if (
-      this.isProfitWithTax(profitOrLoss) &&
-      !this.isTaxFreeByTotalAmount(totalSaleValue)
-    ) {
-      profitOrLoss -= this.accumulatedLoss;
-      this.totalQuantity -= quantity;
-      this.accumulatedLoss = 0;
-      const taxDue = profitOrLoss * TaxCalculationService.TAX_ON_PROFIT;
-      return taxDue;
+  private processOperation(
+    weightedAveragePrice: number,
+    totalQuantity: number,
+    accumulatedLoss: number,
+    operation: Operation,
+  ) {
+    if (operation.getType() === OperationTypeEnum.BUY) {
+      const { newWeightedAveragePrice, newTotalQuantity } = this.updateWeightedAveragePrice(
+        weightedAveragePrice,
+        totalQuantity,
+        operation.getUnitCost(),
+        operation.getQuantity(),
+      );
+      return { weightedAveragePrice: newWeightedAveragePrice, totalQuantity: newTotalQuantity, accumulatedLoss, tax: 0 };
     }
 
-    if (
-      this.isProfit(profitOrLoss) &&
-      !this.isTaxFreeByTotalAmount(totalSaleValue)
-    ) {
-      this.accumulatedLoss -= profitOrLoss;
-      this.totalQuantity -= quantity;
-      return 0;
+    if (operation.getType() === OperationTypeEnum.SELL) {
+      const { newAccumulatedLoss, newTotalQuantity, tax } = this.registerSale(
+        weightedAveragePrice,
+        totalQuantity,
+        accumulatedLoss,
+        operation.getUnitCost(),
+        operation.getQuantity(),
+      );
+      return { weightedAveragePrice, totalQuantity: newTotalQuantity, accumulatedLoss: newAccumulatedLoss, tax };
+    }
+
+    return { weightedAveragePrice, totalQuantity, accumulatedLoss, tax: 0 };
+  }
+
+  private registerSale(
+    weightedAveragePrice: number,
+    totalQuantity: number,
+    accumulatedLoss: number,
+    unitCost: number,
+    quantity: number,
+  ): { newAccumulatedLoss: number; newTotalQuantity: number; tax: number } {
+    let profitOrLoss = (unitCost - weightedAveragePrice) * quantity;
+    const totalSaleValue = unitCost * quantity;
+
+    if (this.isProfitWithTax(profitOrLoss, accumulatedLoss) && !this.isTaxFreeByTotalAmount(totalSaleValue)) {
+      profitOrLoss -= accumulatedLoss;
+      return {
+        newAccumulatedLoss: 0,
+        newTotalQuantity: totalQuantity - quantity,
+        tax: profitOrLoss * TaxCalculationService.TAX_ON_PROFIT,
+      };
+    }
+
+    if (this.isProfit(profitOrLoss, accumulatedLoss) && !this.isTaxFreeByTotalAmount(totalSaleValue)) {
+      return {
+        newAccumulatedLoss: accumulatedLoss - profitOrLoss,
+        newTotalQuantity: totalQuantity - quantity,
+        tax: 0,
+      };
     }
 
     if (this.isLoss(profitOrLoss)) {
-      this.accumulatedLoss += Math.abs(profitOrLoss);
-      this.totalQuantity -= quantity;
-      return 0;
+      return {
+        newAccumulatedLoss: accumulatedLoss + Math.abs(profitOrLoss),
+        newTotalQuantity: totalQuantity - quantity,
+        tax: 0,
+      };
     }
 
-    if (this.isTaxFreeByTotalAmount(totalSaleValue)) return 0;
-
-    return 0;
+    return {
+      newAccumulatedLoss: accumulatedLoss,
+      newTotalQuantity: totalQuantity - quantity,
+      tax: 0,
+    };
   }
 
   private isTaxFreeByTotalAmount(totalSaleValue: number): boolean {
     return totalSaleValue <= 20000;
   }
 
-  private isProfit(profitOrLoss: number): boolean {
-    return profitOrLoss > 0 &&
-      (this.accumulatedLoss > 0 && this.accumulatedLoss >= profitOrLoss);
+  private isProfit(profitOrLoss: number, accumulatedLoss: number): boolean {
+    return profitOrLoss > 0 && accumulatedLoss > 0 && accumulatedLoss >= profitOrLoss;
   }
 
-  private isProfitWithTax(profitOrLoss: number): boolean {
-    return profitOrLoss > 0 &&
-      (this.accumulatedLoss <= 0 || this.accumulatedLoss < profitOrLoss);
+  private isProfitWithTax(profitOrLoss: number, accumulatedLoss: number): boolean {
+    return profitOrLoss > 0 && (accumulatedLoss <= 0 || accumulatedLoss < profitOrLoss);
   }
 
   private isLoss(profitOrLoss: number): boolean {
     return profitOrLoss < 0;
   }
 
-  private updateWeightedAveragePrice(unitCost: number, quantity: number): void {
-    const totalValueBefore = this.totalQuantity * this.weightedAveragePrice;
+  private updateWeightedAveragePrice(
+    currentWeightedAveragePrice: number,
+    currentTotalQuantity: number,
+    unitCost: number,
+    quantity: number,
+  ): { newWeightedAveragePrice: number; newTotalQuantity: number } {
+    const totalValueBefore = currentTotalQuantity * currentWeightedAveragePrice;
     const totalValueNewPurchase = quantity * unitCost;
-    this.weightedAveragePrice = (totalValueBefore + totalValueNewPurchase) /
-      (this.totalQuantity + quantity);
-    this.totalQuantity += quantity;
+    
+    const newWeightedAveragePrice = (totalValueBefore + totalValueNewPurchase) /
+      (currentTotalQuantity + quantity);
+
+    const newTotalQuantity = currentTotalQuantity + quantity;
+    return { newWeightedAveragePrice, newTotalQuantity };
   }
 }
