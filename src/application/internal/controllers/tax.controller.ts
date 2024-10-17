@@ -2,16 +2,16 @@ import { TaxCalculationContract } from "@/core/contracts/services/tax_contract.t
 import { OperationData } from "@/core/domains/operation/types.ts";
 
 type TaxOutput = {
-  tax: number
-}
+  tax: number;
+};
 
 export class TaxController {
   constructor(private readonly taxService: TaxCalculationContract<OperationData[]>) {}
 
   calculateTax(batchOperation: OperationData[]) {
-    const taxes = this.taxService.execute(batchOperation)
+    const taxes = this.taxService.execute(batchOperation);
     const output = this.outputParser(taxes);
-    return output
+    return output;
   }
 
   private outputParser(input: number[]): TaxOutput[] {
