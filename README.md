@@ -1,8 +1,8 @@
 # Nubank Code Challenge
 
 ## Como desenvolvi
-- **TDD**: antes de tudo, escrevi os casos de teste unitário baseado nos cases da documentação.
-- **Regras de negócio**: o projeto foi totalmente pensado para isolar o máximo possível das regras de negócio, de estruturas comumente mais mutáveis, como qual será a ferramenta para capturar o input de dados.
+- **TDD**: Antes de tudo, escrevi os casos de teste unitário baseado nos cases da documentação.
+- **Regras de negócio**: O projeto foi totalmente pensado para isolar o máximo possível das regras de negócio, de estruturas comumente mais mutáveis, como qual será a ferramenta para capturar o input de dados.
 - **Refatorações contínuas**: Primeiro empreguei os conhecimentos base que tenho para desenvolver o código, após isso fui realizando refatorações principalmente para utilizar de conceitos da `programação funcional`
   - Eliminar o estado mutável de classes.
   - Usar funções puras que recebem todos os dados como parâmetros e retornam novos valores.
